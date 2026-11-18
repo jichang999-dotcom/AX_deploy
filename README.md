@@ -8,7 +8,7 @@ Claude Code 스킬 배포용 플러그인 마켓플레이스.
 
 ## 설치 (Claude Code 안에서)
 ```
-/plugin marketplace add <OWNER>/claude-skills
+/plugin marketplace add jichang999-dotcom/claude-skills
 /plugin install git-save@claude-skills
 ```
 설치 후 Claude Code 를 다시 켜고 `save 해줘` 또는 `/git-save:git-save` 로 부른다.
