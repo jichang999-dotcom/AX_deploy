@@ -1,5 +1,5 @@
 {
   "name": "git-save",
-  "version": "0.2.0",
-  "description": "바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push · .env·데이터는 구글 드라이브 보관"
+  "version": "0.3.0",
+  "description": "바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push · .env·데이터는 구글 드라이브 보관 · 다른 PC 복원"
 }

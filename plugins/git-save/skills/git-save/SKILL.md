@@ -1,6 +1,6 @@
 ---
 name: git-save
-description: 지금 폴더의 바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push 하고, git 에 안 넣는 .env·데이터 파일은 연결된 구글 드라이브(API 또는 MCP)에 보관한다. 사용자가 "save", "git-save", "저장해줘", "백업해줘", "커밋 푸시 해줘", "깃허브에 올려줘"를 말할 때 트리거한다. 에디터의 파일 저장·코드 안의 save() 함수 이야기에는 쓰지 않는다.
+description: 지금 폴더의 바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push 하고, git 에 안 넣는 .env·데이터 파일은 연결된 구글 드라이브(API 또는 MCP)에 보관하고, 다른 PC 에서는 clone + 드라이브 복원으로 그대로 세팅한다. 사용자가 "save", "git-save", "저장해줘", "백업해줘", "커밋 푸시 해줘", "깃허브에 올려줘", "복원", "다른 PC 에서 세팅"을 말할 때 트리거한다. 에디터의 파일 저장·코드 안의 save() 함수 이야기에는 쓰지 않는다.
 argument-hint: "[커밋 메모]"
 ---
 
@@ -67,7 +67,7 @@ output/
 - 거절(rejected)되면 force 하지 말고 멈추고 보고한다.
 
 ## 6. 드라이브 보관 (.env · 데이터)
-git 이 무시하는 파일(`git ls-files -oi --exclude-standard` — .env · 데이터 · 검사에서 .gitignore 로 보낸 파일)을 드라이브 `claude-backup/<폴더명>/` 에 같은 구조로 올린다. `node_modules` · `.venv` · `__pycache__` · 브라우저 로그인 프로필은 올리지 않는다. **드라이브 파일은 지우지 않는다.** 아래 순서로 **이미 연결된 것을 찾아** 쓴다. 새로 세팅하지 않는다.
+**목적 = 다른 PC 에서 GitHub clone + 드라이브 복원(아래 「복원」)만으로 그대로 세팅.** 그래서 **GitHub 에 없는 파일 전부**(`git ls-files -o` — .env · 데이터 · 검사에서 뺀 파일 · 이번만 뺀 파일)를 드라이브 `claude-backup/<폴더명>/` 에 같은 구조로 올린다. `node_modules` · `.venv` · `__pycache__` · 브라우저 로그인 프로필은 올리지 않는다. **드라이브 파일은 지우지 않는다.** 아래 순서로 **이미 연결된 것을 찾아** 쓴다. 새로 세팅하지 않는다.
 
 1. **구글 API** — **`.env` 를 직접 열지 않는다**(키 찾기는 스크립트가 한다 · 상위 폴더 `.env` 와 환경변수까지 본다). 저장소 폴더에서 이 스킬 폴더의 `drive_sync.py` 를 먼저 `--dry` 로 돌린다:
    `python "<이 스킬 폴더>/drive_sync.py" . --dry` (기본 = 개인 `GOOGLE_AUTH_DIR_PERSONAL`) → 올릴 목록을 보여 주고 → `--dry` 빼고 실행.
@@ -83,6 +83,15 @@ git 이 무시하는 파일(`git ls-files -oi --exclude-standard` — .env · �
 |---|---|---|---|---|
 
 드라이브 칸 = 「API(개인) 3개 올림 · 12개 같음」 / 「MCP 2개」 / 「연결 없음」. 비고에는 검사에서 뺀 파일 · 새로 만든 저장소 주소 · 드라이브 오류를 적는다.
+
+## 복원 — 다른 PC 에서 세팅
+사용자가 「복원」, 「다른 PC 에서 세팅」, 「restore」를 말하면 1~7단계 대신 이것만 한다.
+1. **코드** — 리포 주소와 받을 위치를 묻고 `git clone <주소> <위치>`(또는 `gh repo clone`). 이미 있으면 `git pull` 만.
+2. **드라이브** — clone 한 폴더에서 `python "<이 스킬 폴더>/drive_sync.py" . --restore --dry` → 받을 목록을 보여 주고 → `--dry` 빼고 실행. 드라이브 폴더 이름이 다르면 `--name <이름>`. **없는 파일만 받고, 이미 있는데 다른 파일(`conflict`)은 덮지 않고** 목록으로 묻는다.
+   - API 가 안 되면(새 PC 라 구글 API 세팅 전 · `NO_AUTH`): 「drive.google.com 에서 `claude-backup/<폴더명>` 을 오른쪽 클릭 → 다운로드(zip) → 이 폴더에 압축을 푸세요」라고 안내하고, 푼 뒤 `git status --short` 로 파일이 자리에 왔는지 확인한다. 커넥터로 .env 를 받으면 내용이 대화에 실리므로 쓰지 않는다.
+3. **확인** — `.env` 안의 **경로 값**(예: `GOOGLE_AUTH_DIR`)이 이 PC 에 실제로 있는지 `Test-Path`/`ls` 로만 확인한다(값을 화면에 출력하지 않는다 · 키 이름과 있음/없음만). 사용자 이름이 달라 없으면 「.env 의 <키> 경로를 이 PC 경로로 고치세요」라고 알린다.
+4. **다시 설치** — `requirements.txt` · `package.json` 이 있으면 「`pip install -r requirements.txt` / `npm install` 을 할까요?」 묻고 한다(node_modules · .venv 는 백업하지 않았다).
+5. **보고** — | 폴더 | 코드 | 드라이브 받음 | 충돌 | .env 경로 | 다시 설치 |
 
 ## 하지 말 것
 - `git push --force` · `--no-verify` · 저장소 공개 전환을 묻지 않고 하기.
