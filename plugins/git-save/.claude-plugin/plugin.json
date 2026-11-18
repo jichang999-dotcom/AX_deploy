@@ -1,0 +1,5 @@
+{
+  "name": "git-save",
+  "version": "0.1.0",
+  "description": "바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push"
+}

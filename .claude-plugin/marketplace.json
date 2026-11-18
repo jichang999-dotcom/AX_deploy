@@ -1,0 +1,12 @@
+{
+  "name": "claude-skills",
+  "owner": { "name": "claude-skills" },
+  "description": "Claude Code 업무 스킬 배포용 마켓플레이스",
+  "plugins": [
+    {
+      "name": "git-save",
+      "source": "./plugins/git-save",
+      "description": "바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push"
+    }
+  ]
+}
