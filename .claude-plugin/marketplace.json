@@ -6,7 +6,7 @@
     {
       "name": "git-save",
       "source": "./plugins/git-save",
-      "description": "바뀐 코드를 비밀값·개인정보 검사 후 git 커밋하고 GitHub 비공개 저장소로 push"
+      "description": "코드는 검사 후 GitHub 비공개 push, .env·데이터는 구글 드라이브 보관"
     }
   ]
 }
